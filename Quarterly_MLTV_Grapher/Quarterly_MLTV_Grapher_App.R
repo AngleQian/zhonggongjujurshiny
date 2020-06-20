@@ -144,40 +144,40 @@ ui <- fluidPage(
         tags$div(
           class = "form-group shiny-input-container",
           id = "mltv_init_panel",
-          textInput(
-            "down_payment",
-            "Down payment",
-            value = "0",
-            placeholder = ""
-          )
-          # fluidRow(
-          #   column(
-          #     6,
-          #     tags$label(class = "control-label shiny-bound-input", "Starting MLTV (%)"),
-          #     tags$div(
-          #       class = "input-group",
-          #       tags$input(
-          #         type = "text",
-          #         class = "form-control",
-          #         id = "mltv_init",
-          #         placeholder = "enter 1 for 1%",
-          #         value = "72"
-          #       ),
-          #       tags$div(class = "input-group-addon",
-          #                tags$span(class = "input-group-text", "%"))
-          #     )
-          #   ),
-          #   column(
-          #     6,
-          #     tags$label(class = "control-label shiny-bound-input", "Down payment"),
-          #     tags$input(
-          #       type = "text",
-          #       class = "form-control",
-          #       id = "down_payment",
-          #       value = "0"
-          #     )
-          #   )
+          # textInput(
+          #   "down_payment",
+          #   "Down payment",
+          #   value = "0",
+          #   placeholder = ""
           # )
+          fluidRow(
+            column(
+              6,
+              tags$label(class = "control-label shiny-bound-input", "Starting MLTV (%)"),
+              tags$div(
+                class = "input-group",
+                tags$input(
+                  type = "text",
+                  class = "form-control",
+                  id = "mltv_init",
+                  placeholder = "enter 1 for 1%",
+                  value = "72"
+                ),
+                tags$div(class = "input-group-addon",
+                         tags$span(class = "input-group-text", "%"))
+              )
+            ),
+            column(
+              6,
+              tags$label(class = "control-label shiny-bound-input", "Down payment"),
+              tags$input(
+                type = "text",
+                class = "form-control",
+                id = "down_payment",
+                value = "abcd"
+              )
+            )
+          )
         ),
       )
     ),
@@ -192,16 +192,16 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
+  old_mltv_init <- reactiveVal(value = "72")
+  old_down_payment <- reactiveVal(value = "abcd")
   
   output$mltv_plot <- renderPlotly({
     interest = as.numeric(input$interest) / 100
     principal = as.numeric(input$principal)
     years = as.numeric(input$years)
+    
     years_graph = as.numeric(input$years_graph)
-    years_graph_ = if (years_graph > years)
-      years
-    else
-      years_graph
+    years_graph_ = if (years_graph > years) years else years_graph
     
     if (input$option == "upb") {
       data_frame = quarterly_upb(interest, principal, years, years_graph_)
@@ -209,16 +209,17 @@ server <- function(input, output, session) {
       g <- ggplot(data_frame, mapping = aes(x = Quarter, y = UPB)) +
         geom_point(size = 1, color = "#003f5c") +
         theme(text = element_text(family = "Ubuntu", size = 12))
+      g <- g + scale_x_continuous(sec.axis = sec_axis(~ . / 4, name = "Hi")) 
       
     } else if (input$option == "mltv") {
-      down_payment = as.numeric(input$down_payment)
+      mltv_init = as.numeric(input$mltv_init) / 100
+      mltv_init_ = if (mltv_init < 0) 0 else mltv_init
       
-      down_payment_ = if (down_payment < 0)
-        0
-      else
-        down_payment
-      
-      mltv_init_ = principal / (principal + down_payment_)
+      if (old_down_payment() == "abcd") {
+          down_payment = toString(round(principal / mltv_init_ - principal, digits=-1))
+          old_mltv_init(down_payment)
+          updateTextInput(session, "down_payment", value=down_payment)
+      }
       
       data_frame = quarterly_upb_to_loanamt(interest, principal, years, years_graph_, mltv_init_)
       
@@ -240,33 +241,44 @@ server <- function(input, output, session) {
     }
   })
   
-  # observeEvent(input$down_payment, {
-  #   principal = as.numeric(input$principal)
-  #   down_payment = as.numeric(input$down_payment)
-  #   down_payment_ = if (down_payment < 0)
-  #     0
-  #   else
-  #     down_payment
-  #
-  #   denom = principal + down_payment_
-  #
-  #   updateTextInput(session, "mltv_init", value=toString(round(principal / denom, 1)))
-  # })
+  observeEvent(input$down_payment, {
+    print("down_payment event called")
+    if (old_down_payment() == input$down_payment) {
+      return()
+    }
+    old_down_payment(input$down_payment)
+    print("down_payment different")
+    
+    principal = as.numeric(input$principal)
+    if (is.na(principal)) { return() }
+    down_payment = as.numeric(input$down_payment)
+    if (is.na(down_payment)) { return() }
+    down_payment_ = if (down_payment < 0) 0 else down_payment
+
+    mltv = toString(round((principal / (principal + down_payment_)) * 100, 1)) 
+    old_mltv_init(mltv)
+    updateTextInput(session, "mltv_init", value=mltv)
+  })
   
-  # observeEvent(input$mltv_init, {
-  #   principal = as.numeric(input$principal)
-  #   mltv_init = as.numeric(input$mltv_init) / 100
-  #   mltv_init_ = if (mltv_init < 0)
-  #     0
-  #   else
-  #     mltv_init
-  #
-  #   if (mltv_init_ == 0) {
-  #     updateTextInput(session, "down_payment", value="NA")
-  #   } else {
-  #     updateTextInput(session, "down_payment", value=toString(round(principal / mltv_init_ - principal, digits=-1)))
-  #   }
-  # })
+  observeEvent(input$mltv_init, {
+    print("mltv_init event called")
+    if (old_mltv_init() == input$mltv_init) {
+      return()
+    }
+    old_mltv_init(input$mltv_init)
+    print("mltv_init different")
+    
+    
+    principal = as.numeric(input$principal)
+    if (is.na(principal)) { return() }
+    mltv_init = as.numeric(input$mltv_init) / 100
+    if (is.na(mltv_init)) { return() }
+    mltv_init_ = if (mltv_init < 0) 0 else mltv_init
+
+    down_payment = toString(round(principal / mltv_init_ - principal, digits=1))
+    old_mltv_init(down_payment)
+    updateTextInput(session, "down_payment", value=down_payment)
+  })
   
   
   
