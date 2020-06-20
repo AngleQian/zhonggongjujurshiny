@@ -1,0 +1,117 @@
+<div class="col-auto">
+      <label class="sr-only" for="inlineFormInputGroup">Username</label>
+      <div class="input-group mb-2">
+
+        <div class="input-group-prepend">
+          <div class="input-group-text">@</div>
+        </div>
+
+        <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Username">
+
+      </div>
+</div>
+
+<div class="input-group mb-3">
+
+  <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="basic-addon2">
+  <div class="input-group-append">
+    <span class="input-group-text" id="basic-addon2">@example.com</span>
+  </div>
+</div>
+
+
+HTML('<div class="form-group shiny-input-container">
+      <div style="margin-bottom: 5px;" class="input-group">
+         <input id="interest" type="text" class="form-control shiny-bound-input" value="99">
+         <span class="input-group-addon">
+         <i class="fa fa-percent">
+
+         </i>
+         </span>
+         </div>
+         </div>')
+
+tags$div(class = "form-group shiny-input-container", id = "mltv_init_panel",
+               tags$label(class="control-label", "Starting MLTV (%)"),
+               tags$div(class="input-group",
+                        tags$input(type = "text", class = "form-control", id="mltv_init", placeholder="enter 1 for 1%", value = "72"),
+                        tags$div(class = "input-group-addon",
+                                 tags$span(class = "input-group-text","%")
+                        )
+               )
+      )
+
+      tags$div(class="form-group shiny-input-container", id="mltv_init_panel", HTML(
+        '<div class="form-row">
+          <div class="col-md-6 mb-3">
+            <label class="control-label">
+              Starting MLTV (%)
+            </label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="mltv_init" placeholder="enter 1 for 1%", value="72">
+              <div class="input-group-addon">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="control-label">
+              Down Payment
+            </label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="down_payment">
+            </div>
+          </div>
+        </div>'
+      ))
+
+<div class="form-group shiny-input-container", id="mltv_init_panel">
+	<div class="form-row">
+		<div class="col-md-6 mb-3">
+			<label class="control-label">
+				Starting MLTV (%)
+			</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="mltv_init" placeholder="enter 1 for 1%" value="72">
+				<div class="input-group-addon">
+					<span class="input-group-text">%</span>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6 mb-3">
+			<label class="control-label">
+				Down Payment
+			</label>
+			<div class="input-group">
+				<input type="text" class="form-control" id="down_payment">
+			</div>
+		</div>
+	</div>
+</div>
+
+tags$div(class="form-group shiny-input-container", id="mltv_init_panel",
+	tags$div(class="form-row"
+		tags$div(class="col-md-6 mb-3",
+			tags$label(class="control-label", "Starting MLTV (%)"),
+			tags$div(class="input-group",
+				tags$input(type="text" class="form-control" id="mltv_init" placeholder="enter 1 for 1%", value="72"),
+				tags$div(class="input-group-addon",
+					tags$span(class="input-group-text", "%")
+				)
+			)
+		)
+		tags$div(class="col-md-6 mb-3",
+			tags$label(class="control-label", "Down payment"),
+			tags$div(class="input-group",
+				tags$input(type="text" class="form-control" id="down_payment")
+			)
+		)
+	)
+)
+
+
+
+
+
+
+
