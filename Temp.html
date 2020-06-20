@@ -111,7 +111,48 @@ tags$div(class="form-group shiny-input-container", id="mltv_init_panel",
 
 
 
-
+<div class="container">
+  <form class="form-inline" role="form">
+    <div class="form-group">
+      <label class="control-label">Amount</label>
+    </div>
+    <div class="form-group">
+      <div class="radio">
+        <label class="radio-inline control-label">
+          <input type="radio" id="amount_25" name="amount" value="25" checked="">
+          $25.00
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="radio">
+        <label class="radio-inline control-label">
+          <input type="radio" id="amount_50" name="amount" value="50">
+          $50.00
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="radio">
+        <label class="radio-inline control-label">
+          <input type="radio" id="amount_100" name="amount" value="100">
+          $100.00
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="radio">
+        <label class="radio-inline control-label">
+          <input type="radio" id="amount_other" name="amount" value="Other: $">
+          Other: $
+        </label>
+      </div>
+    </div>
+    <div class="form-group">
+      <input placeholder="Amount" type="text" class="form-control" id="amount_actual" name="amount_actual" maxlength="5" data-rule-required="true" contenteditable="false">
+    </div>
+  </form>
+</div>
 
 
 
